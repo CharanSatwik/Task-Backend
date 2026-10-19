@@ -82,12 +82,14 @@ npm test
 ### 1. Interactive Web Dashboard (`http://localhost:3000`)
 The web dashboard provides a live interface to create, filter by status, update, and delete tasks in real time:
 
-![Task Management Dashboard](docs/images/result-dashboard.png)
+<img width="1600" height="927" alt="WhatsApp Image 2026-10-19 at 4 50 46 PM" src="https://github.com/user-attachments/assets/74035857-ff95-47ec-96e7-be4f59a49b31" />
+
 
 ### 2. REST API JSON Output (`http://localhost:3000/api/tasks`)
 Raw JSON response returned by the backend verifying task creation, auto-generated IDs, status tracking, and ISO timestamps:
 
-![REST API JSON Response](docs/images/result-json-api.png)
+<img width="733" height="608" alt="WhatsApp Image 2026-10-19 at 4 56 57 PM" src="https://github.com/user-attachments/assets/3a0bee58-f9d7-43be-8096-39ff0ae2aea3" />
+
 
 ---
 
@@ -275,11 +277,14 @@ curl -X DELETE http://localhost:3000/api/tasks/1
 Below are the interaction snapshots capturing the iterative development and requirements discussion with the AI agent:
 
 ### 1. Initial Prompt & Project Setup
-![Initial Prompt & Backend Requirements](docs/images/interaction-1-initial-prompt.png)
+<img width="1250" height="751" alt="prompt 1" src="https://github.com/user-attachments/assets/e2f273b1-61b1-4073-949c-cd566ffd3a5d" />
+
 
 ### 2. Feature Specification & Schema Confirmation
-![Task Management Features and Schema](docs/images/interaction-2-feature-spec.png)
+<img width="1256" height="756" alt="prompt 2" src="https://github.com/user-attachments/assets/eef60d1d-5cc0-411d-9cc0-39a04a383956" />
+
 
 ### 3. Refinement, Model Generation, and Quality Improvements
-![Refinement Prompt and Quality Implementation](docs/images/interaction-3-refinement-prompt.png)
+<img width="1143" height="727" alt="prompt 3" src="https://github.com/user-attachments/assets/72951bae-2cb6-434e-a608-1964264a4030" />
+
 
