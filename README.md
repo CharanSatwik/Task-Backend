@@ -85,10 +85,14 @@ The web dashboard provides a live interface to create, filter by status, update,
 <img width="1600" height="927" alt="WhatsApp Image 2026-10-19 at 4 50 46 PM" src="https://github.com/user-attachments/assets/74035857-ff95-47ec-96e7-be4f59a49b31" />
 
 
-### 2. REST API JSON Output (`http://localhost:3000/api/tasks`)
+### 2. REST API JSON Output (Running Backend) (`http://localhost:3000/api/tasks`)
 Raw JSON response returned by the backend verifying task creation, auto-generated IDs, status tracking, and ISO timestamps:
 
 <img width="733" height="608" alt="WhatsApp Image 2026-10-19 at 4 56 57 PM" src="https://github.com/user-attachments/assets/3a0bee58-f9d7-43be-8096-39ff0ae2aea3" />
+
+### 3. Project Codebase and File Structure
+
+<img width="412" height="656" alt="image" src="https://github.com/user-attachments/assets/68277604-ce29-4092-9449-aa910573d1b4" />
 
 
 ---
@@ -288,3 +292,15 @@ Below are the interaction snapshots capturing the iterative development and requ
 <img width="1143" height="727" alt="prompt 3" src="https://github.com/user-attachments/assets/72951bae-2cb6-434e-a608-1964264a4030" />
 
 
+### Short Note:
+- **What prompts you used**:
+  Initial CRUD specification, browser testing clarification, and a refinement prompt for modular architecture, schema generation, and strict validation.
+
+- **What worked well**:
+  Fast Express MVC scaffolding, comprehensive automated test coverage with 29 passing assertions, and instant browser testing via an interactive dashboard.
+
+- **What issues you faced**:
+  Initial browser visits returned an empty array `[]`, and minor validation error message mismatches occurred during early test runs.
+
+- **How you improved the agent output**:
+  Added default seed data, created formal schema validation, built a simple frontend UI, and separated concerns into dedicated middleware.
