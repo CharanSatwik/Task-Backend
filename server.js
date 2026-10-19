@@ -1,0 +1,8 @@
+const app = require('./app');
+
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`Task Management API server is running on http://localhost:${PORT}`);
+  console.log(`Base tasks route: http://localhost:${PORT}/api/tasks`);
+});

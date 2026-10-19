@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task Management API Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0d1117;
+      --card-bg: #161b22;
+      --border: #30363d;
+      --text: #e6edf3;
+      --text-muted: #8b949e;
+      --primary: #238636;
+      --primary-hover: #2ea043;
+      --danger: #da3633;
+      --danger-hover: #f85149;
+      --pending: #d29922;
+      --in-progress: #58a6ff;
+      --completed: #3fb950;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 2rem 1rem;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .api-badge {
+      font-size: 0.8rem;
+      background: rgba(88, 166, 255, 0.15);
+      color: var(--in-progress);
+      border: 1px solid rgba(88, 166, 255, 0.3);
+      padding: 0.2rem 0.6rem;
+      border-radius: 12px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 2fr 3fr 1.5fr auto;
+      gap: 0.75rem;
+      align-items: end;
+    }
+
+    @media (max-width: 768px) {
+      .form-grid { grid-template-columns: 1fr; }
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+      font-weight: 500;
+    }
+
+    input, select {
+      width: 100%;
+      background: #0d1117;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.6rem 0.8rem;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input:focus, select:focus {
+      border-color: #58a6ff;
+    }
+
+    button {
+      padding: 0.6rem 1.2rem;
+      font-weight: 600;
+      font-size: 0.95rem;
+      border-radius: 6px;
+      cursor: pointer;
+      border: none;
+      transition: background 0.2s, opacity 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: var(--primary-hover); }
+
+    .btn-danger { background: transparent; color: var(--danger); border: 1px solid var(--danger); padding: 0.3rem 0.6rem; font-size: 0.85rem; }
+    .btn-danger:hover { background: var(--danger); color: white; }
+
+    .filters {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      background: var(--card-bg);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      padding: 0.4rem 0.9rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+    }
+
+    .filter-btn.active {
+      background: #21262d;
+      color: var(--text);
+      border-color: #8b949e;
+    }
+
+    .task-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .task-item {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      transition: border-color 0.2s;
+    }
+
+    .task-item:hover {
+      border-color: #8b949e;
+    }
+
+    .task-info {
+      flex: 1;
+    }
+
+    .task-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .task-desc {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .task-meta {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .status-badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.2rem 0.6rem;
+      border-radius: 12px;
+      text-transform: capitalize;
+    }
+
+    .badge-pending { background: rgba(210, 153, 34, 0.15); color: var(--pending); border: 1px solid rgba(210, 153, 34, 0.3); }
+    .badge-in-progress { background: rgba(88, 166, 255, 0.15); color: var(--in-progress); border: 1px solid rgba(88, 166, 255, 0.3); }
+    .badge-completed { background: rgba(63, 185, 80, 0.15); color: var(--completed); border: 1px solid rgba(63, 185, 80, 0.3); }
+
+    .task-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--text-muted);
+    }
+
+    .json-link {
+      color: #58a6ff;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    .json-link:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1>Task Management Dashboard</h1>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.2rem;">
+          Interactive UI communicating with <a class="json-link" href="/api/tasks" target="_blank">/api/tasks</a>
+        </p>
+      </div>
+      <a class="api-badge" href="/api/tasks" target="_blank">Raw JSON API &rarr;</a>
+    </header>
+
+    <!-- Create Task Card -->
+    <div class="card">
+      <h2 style="font-size: 1.1rem; margin-bottom: 1rem;">Create New Task</h2>
+      <form id="create-form" class="form-grid" onsubmit="handleCreate(event)">
+        <div>
+          <label for="task-title">Title *</label>
+          <input type="text" id="task-title" placeholder="e.g. Clean workspace" required>
+        </div>
+        <div>
+          <label for="task-desc">Description</label>
+          <input type="text" id="task-desc" placeholder="e.g. Organize desktop and clear temp files">
+        </div>
+        <div>
+          <label for="task-status">Status</label>
+          <select id="task-status">
+            <option value="pending">Pending</option>
+            <option value="in-progress">In-Progress</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+        <div>
+          <button type="submit" class="btn-primary">+ Add Task</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Filter Buttons -->
+    <div class="filters">
+      <button class="filter-btn active" onclick="setFilter('')">All Tasks</button>
+      <button class="filter-btn" onclick="setFilter('pending')">Pending</button>
+      <button class="filter-btn" onclick="setFilter('in-progress')">In-Progress</button>
+      <button class="filter-btn" onclick="setFilter('completed')">Completed</button>
+    </div>
+
+    <!-- Task List -->
+    <div id="task-list" class="task-list">
+      <!-- Injected by JavaScript -->
+    </div>
+  </div>
+
+  <script>
+    let currentFilter = '';
+
+    async function loadTasks() {
+      const url = currentFilter ? `/api/tasks?status=${currentFilter}` : '/api/tasks';
+      try {
+        const res = await fetch(url);
+        const tasks = await res.json();
+        renderTasks(tasks);
+      } catch (err) {
+        console.error('Failed to load tasks:', err);
+      }
+    }
+
+    function renderTasks(tasks) {
+      const container = document.getElementById('task-list');
+      if (!tasks.length) {
+        container.innerHTML = `
+          <div class="card empty-state">
+            <p>No tasks found.</p>
+            <p style="font-size: 0.85rem; margin-top: 0.5rem;">Use the form above to create your first task!</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = tasks.map(t => `
+        <div class="task-item">
+          <div class="task-info">
+            <div class="task-title">
+              <span>#${t.id} - ${escapeHtml(t.title)}</span>
+              <span class="status-badge badge-${t.status}">${t.status}</span>
+            </div>
+            ${t.description ? `<div class="task-desc">${escapeHtml(t.description)}</div>` : ''}
+            <div class="task-meta">Created: ${new Date(t.created_at).toLocaleString()}</div>
+          </div>
+          <div class="task-actions">
+            <select style="width: auto; padding: 0.3rem 0.5rem; font-size: 0.85rem;" onchange="updateStatus(${t.id}, this.value)">
+              <option value="pending" ${t.status === 'pending' ? 'selected' : ''}>Pending</option>
+              <option value="in-progress" ${t.status === 'in-progress' ? 'selected' : ''}>In-Progress</option>
+              <option value="completed" ${t.status === 'completed' ? 'selected' : ''}>Completed</option>
+            </select>
+            <button class="btn-danger" onclick="deleteTask(${t.id})">Delete</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function handleCreate(e) {
+      e.preventDefault();
+      const title = document.getElementById('task-title').value;
+      const description = document.getElementById('task-desc').value;
+      const status = document.getElementById('task-status').value;
+
+      try {
+        const res = await fetch('/api/tasks', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title, description, status })
+        });
+        if (res.ok) {
+          document.getElementById('task-title').value = '';
+          document.getElementById('task-desc').value = '';
+          loadTasks();
+        } else {
+          const err = await res.json();
+          alert(err.error || 'Failed to create task');
+        }
+      } catch (err) {
+        alert('Network error creating task');
+      }
+    }
+
+    async function updateStatus(id, newStatus) {
+      try {
+        const res = await fetch(`/api/tasks/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: newStatus })
+        });
+        if (res.ok) {
+          loadTasks();
+        } else {
+          const err = await res.json();
+          alert(err.error || 'Failed to update task');
+        }
+      } catch (err) {
+        alert('Network error updating task');
+      }
+    }
+
+    async function deleteTask(id) {
+      if (!confirm(`Delete task #${id}?`)) return;
+      try {
+        const res = await fetch(`/api/tasks/${id}`, { method: 'DELETE' });
+        if (res.ok) {
+          loadTasks();
+        } else {
+          const err = await res.json();
+          alert(err.error || 'Failed to delete task');
+        }
+      } catch (err) {
+        alert('Network error deleting task');
+      }
+    }
+
+    function setFilter(filter) {
+      currentFilter = filter;
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.textContent.toLowerCase().includes(filter || 'all'));
+      });
+      loadTasks();
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    loadTasks();
+  </script>
+</body>
+</html>
